@@ -1,0 +1,45 @@
+Spring Data JPA Implementation : 
+
+
+We can of course write our whole code in controller package, where the api end point is hit and method execution take place.
+but it is not the best practice,
+
+controller should call service..
+service should call repository for Database related work.
+
+this is the process we should follow while writing the code.
+
+
+
+For repository ,
+
+we just need to create one interface, and simple extend "MongoRepository"  (if databse is mongoDB ) 
+or "JpaRepository" when there is an relational (sql) db.
+
+
+Like this : 
+
+``````````````````````````````````````````````````````````````````````````
+public interface JournalRepo extends MongoRepository<Journal, ObjectId> {}
+``````````````````````````````````````````````````````````````````````````
+
+these are prewritten interfaces provided by spring to use.
+there are multiple methods available (all CRUD methods, and some additional methods also. ) 
+
+If we want to make out own Query ( you might want to fetch data according to your requirements ).
+then just add any method.
+and make use of @Query annotation. and in bracket ( ) add your query.
+this query will by JPQL.
+Java Persistence query language (JPQL).
+
+for example : 
+
+there is a table named "Address", there is an entity "Address" class (modal). 
+here we have created a method named "findAddressByID", and we have passed arguments id.
+what will this @Param will do is, it will search ":id" in JPQL and will replace your passed id in query to fetch the data.
+
+
+``````````````````````````````````````````````````````````````````````````
+@Query("SELECT a FROM Address a WHERE a.id = :id")
+Address findAddressById(@Param("id") Long id);
+``````````````````````````````````````````````````````````````````````````

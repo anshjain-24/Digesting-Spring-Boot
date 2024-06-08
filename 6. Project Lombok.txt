@@ -1,0 +1,24 @@
+Project Lombok :
+
+Project Lombok is a java library that automatically plugs into your editor and build tools, spicing up your java.
+Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more
+
+Lombok is a popular library in the Java ecosystem, often used
+in Spring Boot applications.
+
+
+It aims to reduce the boilerplate code that developers have to write,
+such as getters, setters, constructors, and more.
+
+Lombok achieves this by generating this code automatically during compilation,
+based on annotations you add to your Java classes.
+
+Add maven dependency in pom.xml : 
+<dependencies>
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<version>1.18.32</version>
+		<scope>provided</scope>
+	</dependency>
+</dependencies>

@@ -1,0 +1,50 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Maven :
+
+1. It is a build automation tool,
+2. it manages dependency in project
+
+
+2. Dependency Management : 
+-----------------------------------------------------------------------------
+
+there are so many JARs available at maven repository...
+
+each dependency has coordinates  like group id, artifact id, and version.
+
+we just need to paste this things in pom,xml file in out project.
+
+maven will automatically download and include that jar in out project. 
+
+
+1. Build Process  :
+-----------------------------------------------------------------------------
+
+Maven is based around the central concept of a build lifecycle. 
+What this means is that the process for building and distributing a particular 
+artifact (project) is clearly defined.
+
+Build LifeCycle Phases : 
+
+1. validate - validate the project is correct and all necessary information is available
+2. compile - compile the source code of the project
+3. test - test the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed
+4. package - take the compiled code and package it in its distributable format, such as a JAR.
+5. verify - run any checks on results of integration tests to ensure quality criteria are met
+6. install - install the package into the local repository, for use as a dependency in other projects locally
+7. deploy - done in the build environment, copies the final package to the remote repository for sharing with other developers and projects.
+
+
+Use .\mvnw command to run these things in terminal if maven is not installed into the system.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+After mvn package command, the jar file of out project is created.
+
+that jar file is called Fat jar, because that file includes each and everything of code. (each dependency / each things to be able to run the code)
+another file is .jar.original
+
+.jar.original file includes only compiled code.
+
+

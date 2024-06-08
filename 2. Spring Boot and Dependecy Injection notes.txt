@@ -1,0 +1,64 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Spring Boot :
+
+Spring Provides IoC ( Inversion of Control ) :
+IoC is a container in which there are all objects (of classes )
+
+ApplicationContext is a way of implementation of IoC.
+IoC is concept, ApplicationContext is implementation.
+
+IoC or ApplicationContext, both can be used to describe each other
+
+How it Works :
+
+ApplicationContext Scans all the class under base package.
+the base is the package inside which the main class file is there.
+
+ApplicationContext finds out that on which classes there an Annotation "@Component" is used.
+
+Annotation can be used on top of Class, Interface, Methods and even on Fields.
+Annotations provides the information of relative class,interface,method or field.
+
+On whichever class under the base package there is this "@Component" Annotation is
+used , ApplicationContext keeps the objects of those classes.
+
+those classes who have this "@Component" Annotation : those classes are then registered as spring bean.
+
+IoC gives objects of the classes as and when needed.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Entry point :
+
+The Main Class, which includes main method in spring boot project, has this Annotation before its name
+@SpringBootApplication
+
+This Annotation must be used once and that too on main class.
+This Annotation, itself does include three Annotation's working.
+those 3 Annotations are ,
+1. @ComponentScan :
+
+this Annotation scans the base package of project and gives info regarding which class has @Component,
+so that IoC has to have the objects of those class
+
+2. @EnableAutoConfiguration :
+
+this Annotation helps in Automate all the configurations.
+for example, if our projects needs to connect to DB, then instead of writing its configurations,
+we simply add necessary details like URL, UserName, Password etc., using this Annotation all the
+configuration is done by spring boot.
+
+3. @Configuration :
+
+When we write this annotation on any class, then we are telling spring boot that
+this class is providing some kind of configuration.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Dependency Injection :
+
+@Autowired : whenever we want to have an instance(object) of any class in some other class,
+we simply not create the object using new keyword,
+instead we ask for the object of that class from IoC.
+this is where we have to use @Autowired Annotation.
+if class A has field having Type of class B. that means,  Class A is dependent on Class B.
+herein, IoC Injects object of Class B in Class A.
+This is called Dependency Injection.

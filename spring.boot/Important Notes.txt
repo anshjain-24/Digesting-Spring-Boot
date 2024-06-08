@@ -1,0 +1,114 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Maven :
+
+1. It is a build automation tool,
+2. it manages dependency in project
+
+
+2. Dependency Management : 
+-----------------------------------------------------------------------------
+
+there are so many JARs available at maven repository...
+
+each dependency has coordinates  like group id, artifact id, and version.
+
+we just need to paste this things in pom,xml file in out project.
+
+maven will automatically download and include that jar in out project. 
+
+
+1. Build Process  :
+-----------------------------------------------------------------------------
+
+Maven is based around the central concept of a build lifecycle. 
+What this means is that the process for building and distributing a particular 
+artifact (project) is clearly defined.
+
+Build LifeCycle Phases : 
+
+1. validate - validate the project is correct and all necessary information is available
+2. compile - compile the source code of the project
+3. test - test the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed
+4. package - take the compiled code and package it in its distributable format, such as a JAR.
+5. verify - run any checks on results of integration tests to ensure quality criteria are met
+6. install - install the package into the local repository, for use as a dependency in other projects locally
+7. deploy - done in the build environment, copies the final package to the remote repository for sharing with other developers and projects.
+
+
+Use .\mvnw command to run these things in terminal if maven is not installed into the system.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+After mvn package command, the jar file of out project is created.
+
+that jar file is called Fat jar, because that file includes each and everything of code. (each dependency / each things to be able to run the code)
+another file is .jar.original
+
+.jar.original file includes only compiled code.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Spring Boot :
+
+Spring Provides IoC ( Inversion of Control ) :
+IoC is a container in which there are all objects (of classes )
+
+ApplicationContext is a way of implementation of IoC.
+IoC is concept, ApplicationContext is implementation.
+
+IoC or ApplicationContext, both can be used to describe each other
+
+How it Works :
+
+ApplicationContext Scans all the class under base package.
+the base is the package inside which the main class file is there.
+
+ApplicationContext finds out that on which classes there an Annotation "@Component" is used.
+
+Annotation can be used on top of Class, Interface, Methods and even on Fields.
+Annotations provides the information of relative class,interface,method or field.
+
+On whichever class under the base package there is this "@Component" Annotation is
+used , ApplicationContext keeps the objects of those classes.
+
+those classes who have this "@Component" Annotation : those classes are then registered as spring bean.
+
+IoC gives objects of the classes as and when needed.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Entry point :
+
+The Main Class, which includes main method in spring boot project, has this Annotation before its name
+@SpringBootApplication
+
+This Annotation must be used once and that too on main class.
+This Annotation, itself does include three Annotation's working.
+those 3 Annotations are ,
+1. @ComponentScan :
+
+this Annotation scans the base package of project and gives info regarding which class has @Component,
+so that IoC has to have the objects of those class
+
+2. @EnableAutoConfiguration :
+
+this Annotation helps in Automate all the configurations.
+for example, if our projects needs to connect to DB, then instead of writing its configurations,
+we simply add necessary details like URL, UserName, Password etc., using this Annotation all the
+configuration is done by spring boot.
+
+3. @Configuration :
+
+When we write this annotation on any class, then we are telling spring boot that
+this class is providing some kind of configuration.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Dependency Injection :
+
+@Autowired : whenever we want to have an instance(object) of any class in some other class,
+we simply not create the object using new keyword,
+instead we ask for the object of that class from IoC.
+this is where we have to use @Autowired Annotation.
+if class A has field having Type of class B. that means,  Class A is dependent on Class B.
+herein, IoC Injects object of Class B in Class A.
+This is called Dependency Injection.
