@@ -1,0 +1,66 @@
+
+@Transactional : 
+
+
+Why we need : 
+
+In some cases, we as programmer want certain things to be taken placed as whole or
+else that should not be taken place at all.
+In DBMS, There are some properties called "ACID" properties. in that A stands for atomicity, 
+that means , any transaction in DB should be either done 100% or else 0%.
+
+
+let's take an example ,
+
+1	 public void saveJournalEntry(Journal journal,String username){
+2       	 journal.setDate(LocalDate.now());
+3        	 Journal journal1 = journalRepo.save(journal);
+4	         User user = userService.findByUserName(username);
+5       	 user.getJournals().add(journal1);
+6  	         userService.saveUser(user);
+7        	 return;
+8    	 }
+
+
+here in this method, 
+what if any exception occur just before line no. 5
+then what will happen ?   journal would be saved in "journal" collection but 
+			  in "user" collection, in the list of journal of that user, it will not be added,
+			inconsistency would be there.
+
+We need to do somManaething so that whole method run as a single operation, or else it should not work at all
+
+@Transactional Annotation : 
+
+for this we should simply add @Transactional Annotation above method, it will do execute that whole method as single expression.
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+Before using @Transactional annotation, we need to add one more annotation above the main class of our project. 
+It is @EnableTransactionManagement
+
+@EnableTransactionManagement : 
+
+
+What this annotation do is, it tells spring to scan all those methods while have @Transactional Annotation above them.
+Spring will create Transactional context with respect to all those methods. which simply means that it will create a container, inside that container spring will add all DB related instructions and will run it as a whole.
+
+
+This only facilitate Atomicity, but it also ensure Isolation property.
+
+suppose, there are 2 requests at a same time, and this method is to be execute in parallel, then spring will create two instances of the container.
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+Who Actually does all these things : 
+
+There is an interface called "PlatformTransactionManagement".
+Implementation class of this interface is MongoTransactionalManagement for MongoDB
+
+Inside this, there are multiple methods like commitTransaction(), abortTransaction(), closeSession() etc.
+
+

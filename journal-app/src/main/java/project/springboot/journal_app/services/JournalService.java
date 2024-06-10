@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.springboot.journal_app.entity.Journal;
 import project.springboot.journal_app.entity.User;
 import project.springboot.journal_app.repository.JournalRepo;
@@ -26,6 +27,7 @@ public class JournalService {
         return user.getJournals();
     }
 
+    @Transactional
     public void saveJournalEntry(Journal journal,String username){
         journal.setDate(LocalDate.now());
         Journal journal1 = journalRepo.save(journal);
