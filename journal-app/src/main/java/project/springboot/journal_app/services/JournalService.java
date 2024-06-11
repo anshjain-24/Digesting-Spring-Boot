@@ -33,6 +33,7 @@ public class JournalService {
         Journal journal1 = journalRepo.save(journal);
         User user = userService.findByUserName(username);
         user.getJournals().add(journal1);
+//        user.setUsername(null);
         userService.saveUser(user);
         return;
     }

@@ -59,8 +59,50 @@ suppose, there are 2 requests at a same time, and this method is to be execute i
 Who Actually does all these things : 
 
 There is an interface called "PlatformTransactionManagement".
+
 Implementation class of this interface is MongoTransactionalManagement for MongoDB
 
-Inside this, there are multiple methods like commitTransaction(), abortTransaction(), closeSession() etc.
+Inside this class, there are multiple methods like commitTransaction(), abortTransaction(), closeSession() etc.
+
+
+Actually we need to provide bean of this interface, through that bean spring will be able to handle/implement the transections. 
+
+for that we can simple write one method in out base class, annotated with @Bean (to specify that this is to provide a bean (object) ). 
+( @Bean is optional, spring is smart enough to understand that)
+
+we can add this method in another class too, but then we will have to annotate that class with @Configuration.
+then only spring will understand that there is a class and there might be some methods which are needed to be executed.
+
+add the method like this to provide the bean : 
+
+Name of the method can be anything, it does not matter at all.
+
+
+We need one onbject of "MongoDatabaseFactory" Interface, 
+the is the interface which includes all the methods which are actually required to connect with mongo database 
+and work all the things related to mongo database. ( like to getMongoDatabase(), getSession() etc. ) 
+
+
+-----------------------------------------------------------------------------------------------------------------
+@Bean
+public PlatformTransactionManagement falaana ( MongoDatabaseFactory dbFactory ) {
+
+	return new MongoTransactionalManagement ( dbFactory ) ;
+
+}
+-----------------------------------------------------------------------------------------------------------------
+
+
+You may encounter an error which says 
+Illegal Operation : "Transaction numbers are only allowed on a replica set member or mongos"
+
+in simple terms, it says that, out mongoDB (which is running locally) has only one instance running in our machine,
+There is no replication right now.
+In MongoDB, Replication is mandatory for transection to happen. 
+
+(we can of course, do replication of mongoDB locally, but here in this project (journal-app) we will use MongoDB Atlas, 
+we will store data on AWS, the instance of our DB would be on AWS)
+
+
 
 

@@ -13,6 +13,33 @@ such as getters, setters, constructors, and more.
 Lombok achieves this by generating this code automatically during compilation,
 based on annotations you add to your Java classes.
 
+
+For example we have a class which is having some fields. 
+we need to write getters and setters methods for those fields.
+
+then using Lombok what we can do is, simply add @Getter and @Setter just above the class name.
+It will add the getter and setter methods for each fields of that class on runtime.
+
+there are many other annotations like NoArgsConstructor, AllArgsConstructor etc.
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+there is one Annotation called "Data"
+
+@Data is Equivalent to @Getter @Setter @RequiredArgsConstructor @ToString @EqualsAndHashCode.
+
+
+Remember to add @NoArgsConstructor Annotation above the classname, it is not compulsory but it is required in deserialization process,
+
+Deserialize process is converting Json data to POJO (Plain Old Java Object). (in short to map the json data to save in java object)
+
+For Deserialization No Arg Constructor is required which is not there in @Data. 
+----------------------------------------------------------------------------------------------------------------------------------------------- 
+
+
+
 Add maven dependency in pom.xml : 
 <dependencies>
 	<dependency>
