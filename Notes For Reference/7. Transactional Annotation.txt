@@ -28,7 +28,7 @@ then what will happen ?   journal would be saved in "journal" collection but
 			  in "user" collection, in the list of journal of that user, it will not be added,
 			inconsistency would be there.
 
-We need to do somManaething so that whole method run as a single operation, or else it should not work at all
+We need to do something so that whole method run as a single operation, or else it should not work at all
 
 @Transactional Annotation : 
 
