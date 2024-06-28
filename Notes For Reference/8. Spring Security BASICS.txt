@@ -1,0 +1,187 @@
+Spring Security : 
+
+Spring Security is a powerful and highly customizable security framework that is often used in spring boot applications to "handle authentication and authorization"
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+- Authentication : the process of verifying a user's identity (id,password)
+
+- Authorization : the process of granting or denying access to specific resource or actions based on the authenticated user's role and permissions.
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Configuration :
+
+we need a dependency : 
+
+<dependency>
+<groupId> org.springframework.boot </groupId>
+<artifactId> spring-boot-starter-security </artifactId>
+</dependency>
+
+Once the dependency is added, Spring Boot's auto-configuration feature will automatically apply security to the application.
+
+By default SPring Security uses HTTP Basic Authentication.
+
+In HTTP Basic : 
+
+The client sends an Authorization header 
+Authorization: Basic < encoded-string> 
+The server decodes the string, extracts the username and password, and verifies them. 
+If they're correct, access is granted. Otherwise, an "Unauthorized" response is sent back
+
+
+<encodeed-string> : Encoding Credentials are combined into a string like
+username:password
+which is then encoded using base64. 
+
+base64 is technique (or algo) which is used to encode the strings
+(refer this site  :  https://www.base64decode.org/ )
+
+By default, all endpoints will be secured. (all APIs)
+Spring Security will generate a default user with a random password that is printed in the console logs on startup of application.
+
+you can also configure username and password in application.properties
+eg. 
+spring.security.user.name = user
+spring.security.user.password = password
+
+ 
+
+Right now every-thing was done by spring security. but we can customize whole configuration by adding a class and annotate it with @Configuration. 
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+for example  :
+
+@Configuration
+@EnableWebSecurity
+	public class SecurityConfig extends WebSecurityConfigurerAdapter {
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+   		 http
+			.authorizeRequests()
+			.antMatchers ("/hello" ).permitAll()
+			.anyRequest().authenticated()
+			.and()	
+			.formLogin();
+ 
+		} 	
+	}
+
+
+The above code is for older version of spring boot, and may not work for newer version. (but the basic things/concentps remains same, only naming conviction could be there)
+
+@EnableWebSecurity : it is to tell spring security that i am now going to customize the security
+
+This annotation signals Spring to enable its web security support.
+This is what makes your application secured. 
+It's used in conjunction with @Configuration.
+
+
+You may give any name to class, it does not matter
+
+our class must extend WebSecurityConfigurerAdapter.
+
+WebSecurityConfigurerAdapter is a utility class in the Spring Security framework that provides default configurations and allows customization of certain
+features. 
+By extending it, you can configure and customize Spring Security for your application needs.
+
+
+Here, we a method "configure" which is overridden from WebSecurityConfigurerAdapter, 
+in this method we can customize like to whome to give what access and all.
+
+
+We need to pass the HttpSecurity Object : It will help us in filtering the APIs.
+ 
+ IMPORTANT (Explains above code (Each Line) ) : 
+
+http => root (from where the filtering starts)
+
+.authorizeRequests(): This tells Spring Security to start authorizing the requests.
+
+.antMatchers("/hello").permitAll): This part specifies that HTTP requests matching the path /hello should be permitted (allowed) for all users, whether they are authenticated or not.
+
+.anyRequest().authenticated(): This is a more general matcher that specifies any request (not already matched by previous matchers) should be authenticated, meaning users have to provide valid credentials to access these endpoints.
+
+.and(): This is a method to join several configurations. It helps to continue the configuration from the root (HttpSecurity).
+
+.formLogin(): This enables form-based authentication. By default, it will provide a form for the user to enter their username and password.
+
+If the user is not authenticated and they try to access a secured endpoint, they'll be redirected to the default login form.
+
+
+Here,
+
+You can access /hello without any authentication. However, if you try to access another endpoint, you'll be
+redirected to a login form.
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+When we use the .formLogin() method in our security configuration without specifying
+loginPage("/custom-path"), the default login page becomes active.
+
+Spring Security provides an in-built controller that handles the /login path. This controller is responsible for rendering the
+default login form when a GET request is made to /login.
+
+By default, Spring Security also provides logout functionality. When .logout is configured, a 
+POST request to /logout will log the user out and invalidate their session.
+
+
+------------------------ Important ------------------------  
+
+Basic Authenticaion, by its design, is Stateless (i.e. for every request we need to provide Authorization header in request, for each and every time)
+
+
+Let say an example : 
+
+you are a user, you want to see all your notes (journals). you will hit api for that, api will ask you to enter credentials in authorization header which is expected for authentication.
+now you as user has added authorization header with your credentials. 
+
+now, you want to add or delete any notes then you hae to hit another api for that right? so, as http is stateless
+you will have to add your credentials again for this request in authorization header. server will not remember that last time you did provide header.
+
+If inside browser cookies your authorization header was there, then it was possible for server to authenticate but it is not the case.
+
+
+
+to avoid this : 
+
+
+Some applications do mix Basic Authentication with session
+management for various reasons. 
+This isn't standard behavior and requires additional setup and logic. 
+
+In such scenarios, once the user's credentials are verified via Basic Authentication, a session
+might be established, and the client is provided a session cookie.
+
+This way, the client won't need to send the Authorization header
+with every request, and the server can rely on the session cookie
+to identify the authenticated user.
+
+
+When you login with spring Security, it manages your authentication across multiple requests, despite HTTP begin stateless
+
+
+1. Session Creation: After successful authentication, an HTTP session is formed. Your authentication
+details are stored in this session.
+
+2. Session Cookie: A JSESSIONID cookie is sent to your browser, which gets sent back with subsequent
+requests, helping the server recognize your session.
+
+3. SecurityContext: Using the JSESSIONID, Spring Security fetches your authentication details for each
+request.
+
+4. Session Timeout: Sessions have a limited life. If you're inactive past this limit, you're logged out.
+
+5. Logout: When logging out, your session ends, and the related cookie is removed.
+
+6. Remember-Me: Spring Security can remember you even after the session ends using a different
+persistent cookie (typically have a longer lifespan) •
+
+In essence, Spring Security leverages sessions and cookies, mainly JSESSIONID, to ensure you remain
+authenticated across requests.
+

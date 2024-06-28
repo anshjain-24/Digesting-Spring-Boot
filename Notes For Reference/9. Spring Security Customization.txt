@@ -1,0 +1,12 @@
+We want our spring boot application to authenticate users based on their credentials stored in a mongdoDB Database.
+
+This means that our users and their passwords (hashed) will be stored in MongoDB, and when a user tries to log in, the system should check the provided credentials against what's stored in the database.
+
+To achieve this, there 4 steps : 
+
+1. A User entity to represent the user data model.
+2. A repository "UserRepository" to interact with MongoDB.
+3. "UserDetailsService" implementation to fetch user details.
+4. A configuration "SecurityConfig" to integrate everything with Spring Security.
+
+

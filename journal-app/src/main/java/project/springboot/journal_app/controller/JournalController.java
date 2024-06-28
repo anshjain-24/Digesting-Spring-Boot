@@ -4,6 +4,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import project.springboot.journal_app.entity.Journal;
 import project.springboot.journal_app.services.JournalService;
@@ -18,14 +20,19 @@ public class JournalController {
     @Autowired
     JournalService journalService;
 
-    @GetMapping("/{username}/getall")
-    public ResponseEntity<List<Journal>> getAllJournalForUser(@PathVariable String username){
+    @GetMapping("/getall")
+    public ResponseEntity<List<Journal>> getAllJournalForUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         return new ResponseEntity<>(journalService.getAll(username),HttpStatus.OK);
     }
 
-    @PostMapping("/{username}/save")
-    public ResponseEntity<Journal> saveEntry(@RequestBody Journal journal,@PathVariable String username){
+    @PostMapping("/save")
+    public ResponseEntity<Journal> saveEntry(@RequestBody Journal journal){
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            System.out.println("username  :  "+username);
             journalService.saveJournalEntry(journal,username);
             return new ResponseEntity<>(journal,HttpStatus.CREATED);
         }
@@ -47,11 +54,12 @@ public class JournalController {
 
 //    ResponseEntity<?>  =>  this means that you can return object of any class...
 
-    @PutMapping("/update/{username}/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateJournal(
             @PathVariable("id") ObjectId id,
-            @RequestBody Journal newJournal,
-            @PathVariable("username") String username ){
+            @RequestBody Journal newJournal){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         Journal old = journalService.getByID(id).orElse(null);
         System.out.println("old : "+old);
         if(old != null){
@@ -63,8 +71,10 @@ public class JournalController {
         return new ResponseEntity<>("Journal not found",HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("delete/{username}/{id}")
-    public ResponseEntity<?> deleteJournal(@PathVariable("username") String username,@PathVariable("id") ObjectId id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteJournal(@PathVariable("id") ObjectId id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         journalService.deleteEntry(id,username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

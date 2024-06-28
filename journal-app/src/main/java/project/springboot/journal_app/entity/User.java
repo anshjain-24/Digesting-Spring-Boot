@@ -28,4 +28,6 @@ public class User {
 
     @DBRef(lazy = true)
     private List<Journal> journals = new ArrayList<>();
+
+    private List<String> roles;
 }
