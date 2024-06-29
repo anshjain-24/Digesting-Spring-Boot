@@ -8,10 +8,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import project.springboot.journal_app.entity.Journal;
+import project.springboot.journal_app.entity.User;
 import project.springboot.journal_app.services.JournalService;
+import project.springboot.journal_app.services.UserService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -19,6 +22,10 @@ public class JournalController {
 
     @Autowired
     JournalService journalService;
+
+    @Autowired
+    UserService userService;
+
 
     @GetMapping("/getall")
     public ResponseEntity<List<Journal>> getAllJournalForUser(){
@@ -42,13 +49,19 @@ public class JournalController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Journal> getById(@PathVariable ObjectId id){
-        Optional<Journal> journal = journalService.getByID(id);
-        System.out.println(journal);
-        if (journal.isPresent()){
-            return new ResponseEntity<>(journal.get(),HttpStatus.OK);
+    public ResponseEntity<?> getById(@PathVariable ObjectId id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUserName(username);
+        List<Journal> collect = user.getJournals().stream().filter(x -> x.getId().equals(id)).toList();
+        if(!collect.isEmpty()){
+            Optional<Journal> journal = journalService.getByID(id);
+            System.out.println(journal);
+            if(journal.isPresent()){
+                return new ResponseEntity<>(journal.get(),HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("No Entry was found",HttpStatus.NOT_FOUND);
     }
 
 
@@ -60,6 +73,11 @@ public class JournalController {
             @RequestBody Journal newJournal){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+        User user = userService.findByUserName(username);
+        List<Journal> collect = user.getJournals().stream().filter(x -> x.getId().equals(id)).toList();
+        if(collect.isEmpty()){
+            return new ResponseEntity<>("Journal with this id doesn't exist",HttpStatus.NOT_FOUND);
+        }
         Journal old = journalService.getByID(id).orElse(null);
         System.out.println("old : "+old);
         if(old != null){
@@ -75,8 +93,16 @@ public class JournalController {
     public ResponseEntity<?> deleteJournal(@PathVariable("id") ObjectId id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        journalService.deleteEntry(id,username);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        User user = userService.findByUserName(username);
+        List<Journal> collect = user.getJournals().stream().filter(x -> x.getId().equals(id)).toList();
+        if(collect.isEmpty()){
+            return new ResponseEntity<>("Journal with this id doesn't exist",HttpStatus.NOT_FOUND);
+        }
+        boolean removed =  journalService.deleteEntry(id,username);
+        if(removed){
+            return new ResponseEntity<>("Deleted Journal",HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }

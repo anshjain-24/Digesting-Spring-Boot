@@ -18,11 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public List<User> finall(){
-        return userService.getAll();
-    }
-
     @PutMapping("/update")
     public ResponseEntity<?> updateUser( @RequestBody User user){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -31,7 +26,7 @@ public class UserController {
         if(userInDB != null){
             userInDB.setUsername(user.getUsername());
             userInDB.setPassword(user.getPassword());
-            userService.saveUser(userInDB);
+            userService.saveNewUser(userInDB);
             return new ResponseEntity<>(userInDB,HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>("User not found with this username",HttpStatus.BAD_REQUEST);

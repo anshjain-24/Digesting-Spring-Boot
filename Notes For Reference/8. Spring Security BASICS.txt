@@ -131,14 +131,15 @@ By default, Spring Security also provides logout functionality. When .logout is 
 POST request to /logout will log the user out and invalidate their session.
 
 
------------------------- Important ------------------------  
+---------------------------------------------------- Important -----------------------------------------------------  
 
 Basic Authenticaion, by its design, is Stateless (i.e. for every request we need to provide Authorization header in request, for each and every time)
 
 
 Let say an example : 
 
-you are a user, you want to see all your notes (journals). you will hit api for that, api will ask you to enter credentials in authorization header which is expected for authentication.
+you are a user, you want to see all your notes (journals). you will hit api for that, api will ask you to enter 
+credentials in authorization header which is expected for authentication.
 now you as user has added authorization header with your credentials. 
 
 now, you want to add or delete any notes then you hae to hit another api for that right? so, as http is stateless

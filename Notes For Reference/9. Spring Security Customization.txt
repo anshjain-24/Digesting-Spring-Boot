@@ -10,3 +10,80 @@ To achieve this, there 4 steps :
 4. A configuration "SecurityConfig" to integrate everything with Spring Security.
 
 
+We need to override the loadUserByUsername() method which is there in UserDetailsService Interface, that is provided by spring security
+
+we need to return a object of type UserDetails
+
+for example : 
+UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+	          	    .username(user.getUsername())
+	                    .password(user.getPassword())
+	                    .roles(user.getRoles().toArray(new String[0]))
+	                    .build();
+
+
+This method will return the User that is in our DB, based on the username which we provided in header of api request
+
+spring security will take this User (of type UserDetails) for authentication / authorization purposes. 
+
+
+for authentication, we need to autowire one more method in configuration file which looks similar to this  :
+
+@Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+we are passing userDetailService object here which is the object that implementation class of "UserDetailService" interface..
+ALL the Authentication is done by this method..
+
+
+
+
+Untill now, we were passing username as a path veriable in api url, but that is not the correct method, 
+
+we need to take username from the api header, which the user had added while requesting the api.
+
+
+there is one "SecurityContextHolder" class, provided by spring security, it has some methods.
+
+SecurityContextHolder  -> getContext() -> getAuthentication() 
+
+it gives us the instance of Authentication Interface.
+
+
+let's say we store that instance as "auth"
+
+then we can simply have .getName() to fetch the username of the user. 
+
+from username we can fetch everythings related to user using findByUser() method using JPA Repository.
+
+we can then store the user in Our User pojo class.
+
+
+------------------------------------------ Role Based Authorization --------------------------------------------
+
+often we need to separate the users of our application, some users are normal users, some are admin etc...
+
+and we want that based on who is accessing what, we should allow or deny the api request, here is where the Role based authorization comes in picture :
+
+to implement this we have a very simple method called .hasRole(), we just need to define the role 
+
+( there must a list which contains that what are the roles are there for each user... )
+
+
+example  : 
+
+@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        return http.authorizeHttpRequests(request -> request
+                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/api/**","/user/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .httpBasic(Customizer.withDefaults())	
+                .csrf(AbstractHttpConfigurer::disable)
+                .build();
+    } 
+ 
